@@ -3,12 +3,41 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 
-function App() {
-  //   const data = useFetch("https://swapi.dev/api/people");
+const resource = {
+  data: null,
+  promise: null,
+};
+function useFetch() {
+  const url = "https://swapi.dev/api/people";
 
+  resource.promise = fetch(url)
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+      return res.json();
+    })
+    .then((data) => {
+      console.log("received a data", data);
+      resource.data = data;
+    });
+
+  if (resource.data) {
+    return resource.data;
+  } else {
+    throw resource.promise;
+  }
+}
+
+function App() {
+  let data = useFetch();
+  console.log("Data from the custom hook", data);
   return (
     <>
-      <h1>Hello Suspense</h1>
+      <Suspense fallback="Loading...">
+        <h1>Hello Suspense</h1>
+        <p>{data.count}</p>
+      </Suspense>
     </>
   );
 }
